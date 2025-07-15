@@ -188,10 +188,10 @@ def categoria_preferata(categoria,alegere_preturi):
 
 def traducere_produse(text):
     prompt = (
-        f"Te rog să traduci întreg conținutul următor în limba rusă, păstrând fix aceeași structură, formatare și format ca în textul original:\n\n"
-        f"{text}\n\n"
         "Nu schimba nimic în afară de limbă, păstrează toate elementele, formatările, semnele de punctuație și ordinea exactă.\n"
         "În special, traduce corect și profesional toate tipurile de acoperișuri, așa cum se folosesc în limbajul tehnic specific domeniului."
+        f"Te rog să traduci întreg conținutul următor în limba rusă, păstrând fix aceeași structură, formatare și format ca în textul original:\n\n"
+        f"{text}\n\n"
     )
 
     messages = [{"role": "user", "content": prompt}]
