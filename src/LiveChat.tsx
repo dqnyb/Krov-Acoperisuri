@@ -143,7 +143,14 @@ const LiveChat: React.FC = () => {
     
             const msg = data.ask_interests;
 
-    
+            if (
+              msg.includes("Împreună vom parcurge pas cu pas") || 
+              msg.includes("Мы вместе пройдём шаг за шагом")
+            ){
+              setOnboardingStep(8);
+              return;
+            }
+            
             if (
               msg.includes("China mat 0.40 :") ||
               msg.includes("0.45  Arvedi mat :") ||
@@ -170,11 +177,6 @@ const LiveChat: React.FC = () => {
               msg.includes("Мы очень рады узнать, что у вас")
             ){
               setOnboardingStep(6);
-            } else if (
-              msg.includes("Împreună vom parcurge pas cu pas") || 
-              msg.includes("Мы вместе пройдём шаг за шагом")
-            ){
-              setOnboardingStep(8);
             }
           }, 1000);
         })

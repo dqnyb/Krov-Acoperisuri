@@ -2597,7 +2597,7 @@ def ai_mai_comandat():
             ]
 
             message = (
-                "✨ Nu este nicio problemă, <strong>împreună vom parcurge pas cu pas</strong> totul și vom <strong>finaliza comanda ta</strong>. 🛒💚<br><br>"
+                "✨<strong>Împreună vom parcurge pas cu pas</strong> totul și vom <strong>finaliza comanda ta</strong>. 🛒💚<br><br>"
             )
         elif language_saved == "RU":
             messages = [
@@ -2614,7 +2614,7 @@ def ai_mai_comandat():
             ]
         
             message = (
-                "✨ Не переживай, <strong>мы вместе пройдём шаг за шагом</strong> через всё и <strong>завершим твой заказ</strong>. 🛒💚<br><br>"
+                "✨<strong>Мы вместе пройдём шаг за шагом</strong> через всё и <strong>завершим твой заказ</strong>. 🛒💚<br><br>"
             )
 
 

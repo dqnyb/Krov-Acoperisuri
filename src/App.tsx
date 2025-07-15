@@ -361,10 +361,7 @@ function App() {
               <li
                 className='Services-card'
                 key={card.text}
-                onClick={() => {
-                  navigate(card.link);
-                  window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); // Scrolls to top instantly
-                }}
+                onClick={() => window.open(card.link, "_blank")}
                 tabIndex={0}
                 role="button"
                 aria-label={card.text}
