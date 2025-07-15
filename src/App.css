@@ -5,6 +5,11 @@ html, body {
   overflow-x: hidden;
 }
 
+.LiveChat {
+  position: fixed;
+  z-index: 100000;
+}
+
 .Hero {
   position: relative;
   width: 100vw;

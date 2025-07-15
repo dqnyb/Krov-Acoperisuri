@@ -522,7 +522,9 @@ function App() {
           <img src={footerline} className='Footer-line'/>
           <h1 className='Footer-Copyright'>Copyright © 2025 All rights reserved  by Krov Acoperișuri</h1>
       </div>
-      <LiveChat />
+      <div className='LiveChat'>
+        <LiveChat />
+      </div>
     </>
   )
 }
