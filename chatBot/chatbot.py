@@ -104,6 +104,7 @@ def check_language(user_response: str) -> str:
 
 @app.route("/language", methods=["GET"])
 def language():
+    preferinte["Response_Comanda"] = ""
     message = (
         "🌟👋 <strong>Bine ai venit la <span style=\"color:#2E86C1;\">Krov</span> – specialiștii în acoperișuri de calitate!</strong> 🌟🏠<br><br>"
         "🗣️ <strong>Te invităm să alegi limba preferată:</strong><br>"
@@ -121,7 +122,6 @@ def start():
     user_data = request.get_json()
     interest = user_data.get("name", "prieten")
     check_language_rag = check_language(interest)
-    preferinte["Response_Comanda"] = ""
     print(check_language_rag)
 
     if check_language_rag == "RO":
