@@ -2208,7 +2208,7 @@ def produs():
 
     rezultat = function_check_product(interests , preferinte["Produsele"], language_saved)
     print("rezultat = " , rezultat)
-    print(response_culori)
+    # print(response_culori)
 
     if rezultat == "NU":
         length_check = 0
@@ -2521,15 +2521,15 @@ def culoare():
             if language_saved == "RO":
                 reply = (
                     f"🖌️ Culoarea a fost înregistrată cu succes! ✅<br><br>"
-                    "📦 Pentru a te putea ajuta cât mai bine, spune-mi te rog dacă <strong>ai mai avut comenzi la noi</strong> înainte.<br><br>"
-                    "💬 Te rog să răspunzi cu <strong>DA</strong> sau <strong>NU</strong>, ca să putem continua comanda."
+                    "🔢 Te rog să-mi spui ce <strong>cantitate</strong> îți dorești din acest produs.<br><br>"
+                    "💬 Răspunde cu un <strong>număr</strong> (ex: 50, 100...) pentru a continua comanda."
                 )
 
             else:
                 reply = (
                     "🖌️ Цвет был успешно зарегистрирован! ✅<br><br>"
-                    "📦 Чтобы мы могли помочь тебе как можно лучше, пожалуйста, скажи, <strong>делал(а) ли ты у нас заказы ранее</strong>.<br><br>"
-                    "💬 Пожалуйста, ответь <strong>ДА</strong> или <strong>НЕТ</strong>, чтобы мы могли продолжить оформление заказа."
+                    "🔢 Пожалуйста, укажи <strong>количество</strong> товара, которое ты хочешь заказать.<br><br>"
+                    "💬 Ответь числом (например: 50, 100...), чтобы мы могли продолжить оформление заказа."
                 )
 
 
