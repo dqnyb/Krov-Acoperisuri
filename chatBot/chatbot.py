@@ -821,7 +821,7 @@ def welcome():
             request_categorie = categoria_preferata(categoria_aleasa,alegere_pret)
             preferinte["Produsele_RO"] = request_categorie
             if language_saved == "RU":
-                request_categorie = traducere_produse(request_categorie,alegere_pret)
+                request_categorie = traducere_produse(request_categorie)
             preferinte["Produsele"] = request_categorie
             mesaj = request_categorie
             mesaj = format_products_list_with_intro(mesaj)
@@ -836,7 +836,7 @@ def welcome():
             request_categorie = categoria_preferata(categoria_aleasa,alegere_pret)
             preferinte["Produsele_RO"] = request_categorie
             if language_saved == "RU":
-                request_categorie = traducere_produse(request_categorie,alegere_pret)
+                request_categorie = traducere_produse(request_categorie)
             preferinte["Produsele"] = request_categorie
             mesaj = request_categorie
             # mesaj += " . <br><br> Care produs te intereseaza ? "
@@ -879,7 +879,7 @@ def welcome():
             request_categorie = categoria_preferata(categoria_aleasa,alegere_pret)
             preferinte["Produsele_RO"] = request_categorie
             if language_saved == "RU":
-                request_categorie = traducere_produse(request_categorie,alegere_pret)
+                request_categorie = traducere_produse(request_categorie)
                 print(request_categorie)
             preferinte["Produsele"] = request_categorie
             mesaj = request_categorie
@@ -970,7 +970,7 @@ def welcome():
                 request_categorie = categoria_preferata(categoria_aleasa,alegere_pret)
                 preferinte["Produsele_RO"] = request_categorie
                 if language_saved == "RU":
-                    request_categorie = traducere_produse(request_categorie,alegere_pret)
+                    request_categorie = traducere_produse(request_categorie)
                 preferinte["Produsele"] = request_categorie
                 mesaj = request_categorie
                 mesaj = format_products_list_with_intro(mesaj)
@@ -984,7 +984,7 @@ def welcome():
             request_categorie = categoria_preferata(categoria_aleasa,alegere_pret)
             preferinte["Produsele_RO"] = request_categorie
             if language_saved == "RU":
-                request_categorie = traducere_produse(request_categorie,alegere_pret)
+                request_categorie = traducere_produse(request_categorie)
             preferinte["Produsele"] = request_categorie
             mesaj = request_categorie
             mesaj = format_products_list_with_intro(mesaj)
@@ -2965,6 +2965,7 @@ def ai_mai_comandat_welcome():
     language_saved = data.get("language","")
 
     response = check_response_comanda(message)
+
 
     print(response)
     
