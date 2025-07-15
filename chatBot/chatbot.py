@@ -322,7 +322,7 @@ def interests():
     preferinte["Nume_Prenume"] = ""
     # preferinte["Response_Comanda"] = ""
     if preferinte["Response_Comanda"] == "":
-        if (interest_checked == "produs_informații"):
+        if (interest_checked == "produs_informații" or interest_checked == "produse_informații"):
             if language_saved == "RO":
                 reply = (
                     "🔍 Spune-ne te rog dacă <strong>ai mai avut vreo comandă la noi</strong> înainte.<br><br>"
@@ -389,7 +389,7 @@ def interests():
                     "или оформить <em>заказ</em>? 😊"
                 )
     else:
-        if (interest_checked == "produs_informații"):
+        if (interest_checked == "produs_informații" or interest_checked == "produse_informații"):
             if language_saved == "RO":
                 messages = [
                     {
@@ -2193,12 +2193,8 @@ def produs():
                 print("-", c)
                 culor = culor + c + "\n"
             print("culor" , culor)
-            if language_saved == "RU":
-                prompt = f"Te rog să traduci în limba rusă doar culorile din {culor}."
-                messages = [{"role": "system", "content": prompt}]
-                culor = ask_with_ai_3(messages).strip()
-                print("culori in culori: = " , culor)
             response_culori = extrage_culori_si_coduri(culor,culori_hex)
+            response_culori = traducere_produse(response_culori)
             print("response_culori in if = ", response_culori)
     # else:
     #     if language_saved == "RO":

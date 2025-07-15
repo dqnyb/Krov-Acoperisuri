@@ -186,16 +186,19 @@ def categoria_preferata(categoria,alegere_preturi):
 
 # print(translated_text)
 
+
 def traducere_produse(text):
+    print("text = ", text)
     prompt = (
-        "Nu schimba nimic în afară de limbă, păstrează toate elementele, formatările, semnele de punctuație și ordinea exactă.\n"
-        "În special, traduce corect și profesional toate tipurile de acoperișuri, așa cum se folosesc în limbajul tehnic specific domeniului."
+        f"Nu schimba nimic în afară de limbă, păstrează toate elementele, formatările, semnele de punctuație și ordinea exactă.\n"
+        f"În special, traduce corect și profesional toate tipurile de acoperișuri, așa cum se folosesc în limbajul tehnic specific domeniului."
         f"Te rog să traduci întreg conținutul următor în limba rusă, păstrând fix aceeași structură, formatare și format ca în textul original:\n\n"
         f"{text}\n\n"
-    )
 
+    )
+    
     messages = [{"role": "user", "content": prompt}]
     translated_text = ask_with_ai_3(messages, temperature=0, max_tokens=900)
-
+    translated_text = translated_text.replace("align: center;", "align-items: center;")
+    print("translate = " , translated_text)
     return translated_text
-
