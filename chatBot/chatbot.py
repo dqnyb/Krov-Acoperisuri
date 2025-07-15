@@ -329,7 +329,6 @@ def interests():
                     "✅ E suficient să răspunzi cu <strong>DA</strong> sau <strong>NU</strong>."
                 )
 
-
             else:
                 reply = (
                     "🔍 Скажи, пожалуйста, <strong>делал(а) ли ты у нас заказ раньше</strong>?<br><br>"
