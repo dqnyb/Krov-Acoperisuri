@@ -2194,7 +2194,8 @@ def produs():
                 culor = culor + c + "\n"
             print("culor" , culor)
             response_culori = extrage_culori_si_coduri(culor,culori_hex)
-            response_culori = traducere_produse(response_culori)
+            if language_saved == "RU":
+                response_culori = traducere_produse(response_culori)
             print("response_culori in if = ", response_culori)
     # else:
     #     if language_saved == "RO":
