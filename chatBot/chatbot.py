@@ -815,6 +815,7 @@ def welcome():
     print("categoria_aleasa = ", categoria_aleasa)
 
     if is_fuzzy_match(interests,"ds") :
+        print("444444")
         if is_fuzzy_match(interests, "decor"):
             categoria_aleasa = "ds 0.40 décor"
             preferinte["Categorie"] = categoria_aleasa
@@ -831,6 +832,7 @@ def welcome():
                 mesaj += " . <br><br> 📚 Doriti să aflați informații și despre alte categorii sau 🚀 doriți să comandați? 🤔"
             return jsonify({"message": mesaj})
         elif is_fuzzy_match(interests, "alzn"):
+            print("55555")
             categoria_aleasa = "ds 0.40 alzn"
             preferinte["Categorie"] = categoria_aleasa
             request_categorie = categoria_preferata(categoria_aleasa,alegere_pret)
@@ -848,6 +850,7 @@ def welcome():
 
             return jsonify({"message": mesaj})
         else:
+            print("66666")
             search_key = categoria_aleasa.split()[0].lower()
             sub_variante = [cat for cat in categorii_unice if search_key in cat.lower()]
             variante_fara_primul_cuvant = [' '.join(v.split()[1:]) for v in sub_variante]
@@ -873,6 +876,7 @@ def welcome():
                 preferinte['counter'] = 1
             return jsonify({"reply": mesaj})
     elif is_fuzzy_match(interests,"china"):
+        print("7777")
         if "mat" in interests.lower():
             categoria_aleasa = "china mat 0.40"
             preferinte["Categorie"] = categoria_aleasa
@@ -891,7 +895,7 @@ def welcome():
                 mesaj += " . <br><br> 📚 Doriti să aflați informații și despre alte categorii sau 🚀 doriți să comandați? 🤔"
             return jsonify({"message": mesaj})
 
-
+    print("3333333")
 
     if categoria_aleasa == "NU":
         if language_saved == "RO":
@@ -966,6 +970,7 @@ def welcome():
 
                 preferinte['counter'] = 1
             else:
+                print("1111111")
                 preferinte["Categorie"] = categoria_aleasa
                 request_categorie = categoria_preferata(categoria_aleasa,alegere_pret)
                 preferinte["Produsele_RO"] = request_categorie
@@ -977,9 +982,10 @@ def welcome():
                 if language_saved == "RU":
                     mesaj += "<br><br> 📚 Хотите узнать информацию и про другие категории или 🚀 хотите сделать заказ? 🤔"
                 elif language_saved == "RO":
-                    mesaj += " . <br><br> 📚 Doriti să aflați informații și despre alte categorii sau 🚀 doriți să comandați? 🤔"
+                    mesaj += "<br><br> 📚 Doriti să aflați informații și despre alte categorii sau 🚀 doriți să comandați? 🤔"
         
         else:
+            print("22222222 ")
             preferinte["Categorie"] = categoria_aleasa
             request_categorie = categoria_preferata(categoria_aleasa,alegere_pret)
             preferinte["Produsele_RO"] = request_categorie

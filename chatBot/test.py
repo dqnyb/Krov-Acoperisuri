@@ -195,7 +195,7 @@ def traducere_produse(text):
     )
 
     messages = [{"role": "user", "content": prompt}]
-    translated_text = ask_with_ai_3(messages, temperature=0, max_tokens=700)
+    translated_text = ask_with_ai_3(messages, temperature=0, max_tokens=900)
 
     return translated_text
 
