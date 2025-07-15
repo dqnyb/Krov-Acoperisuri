@@ -150,7 +150,7 @@ const LiveChat: React.FC = () => {
               setOnboardingStep(8);
               return;
             }
-            
+
             if (
               msg.includes("China mat 0.40 :") ||
               msg.includes("0.45  Arvedi mat :") ||
@@ -702,7 +702,7 @@ const LiveChat: React.FC = () => {
             displayBotReply(data.reply);
             if (data.reply.includes("Ne bucurăm enorm să aflăm că") || data.reply.includes("Мы очень рады узнать")) {
               setOnboardingStep(6);
-            } else if (data.reply.includes("Nu este nicio problemă") || data.reply.includes("Не переживай,")) {
+            } else if (data.reply.includes("Împreună vom parcurge pas cu pas") || data.reply.includes("Мы вместе пройдём шаг за шагом")) {
               setOnboardingStep(8);
             }
           }, 1000);
