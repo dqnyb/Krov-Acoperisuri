@@ -186,7 +186,6 @@ def categoria_preferata(categoria,alegere_preturi):
 
 # print(translated_text)
 
-
 def traducere_produse(text):
     print("text = ", text)
     prompt = (
@@ -202,3 +201,4 @@ def traducere_produse(text):
     translated_text = translated_text.replace("align: center;", "align-items: center;")
     print("translate = " , translated_text)
     return translated_text
+

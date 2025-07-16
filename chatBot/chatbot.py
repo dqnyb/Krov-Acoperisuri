@@ -28,6 +28,7 @@ CORS(app)
 
 load_dotenv()
 
+TOKEN = os.getenv("HUBSPOT_TOKEN")
 TELEGRAM = os.getenv("TELEGRAM_API_KEY")
 CHAT_ID = os.getenv("CHAT_ID")
 
@@ -36,6 +37,11 @@ openai.api_key = OPENAI_API_KEY
 # Pentru acest proiect am lăsat cheia publică (pentru a fi testată mai repede), dar desigur că nu se face așa!
 # Aș fi folosit client = OpenAI(api_key=os.getenv("OPENAI_API_KEY")) și aș fi dat export în env la key: export OPENAI_API_KEY="sk-..."
 
+# Token primit de la colegul responsabil cu CRM
+HUBSPOT_TOKEN = f"Bearer {TOKEN}"
+
+
+
 client = OpenAI(
     api_key=OPENAI_API_KEY,  # pune aici cheia ta reală!
 )
@@ -43,6 +49,7 @@ client = OpenAI(
 preferinte = {}
 preferinte['interes_salvat'] = ""
 preferinte["Numar_Telefon"] = ""
+preferinte["Trecut_Etapa_Finala"] = ""
 df = pd.read_excel('chatBot/p.xlsx')
 categorii = df['Categorie']
 categorii_unice = list(dict.fromkeys(categorii.dropna().astype(str)))
@@ -104,7 +111,6 @@ def check_language(user_response: str) -> str:
 
 @app.route("/language", methods=["GET"])
 def language():
-    preferinte["Response_Comanda"] = ""
     message = (
         "🌟👋 <strong>Bine ai venit la <span style=\"color:#2E86C1;\">Krov</span> – specialiștii în acoperișuri de calitate!</strong> 🌟🏠<br><br>"
         "🗣️ <strong>Te invităm să alegi limba preferată:</strong><br>"
@@ -122,6 +128,7 @@ def start():
     user_data = request.get_json()
     interest = user_data.get("name", "prieten")
     check_language_rag = check_language(interest)
+    preferinte["Response_Comanda"] = ""
     print(check_language_rag)
 
     if check_language_rag == "RO":
@@ -152,7 +159,7 @@ def start():
 
 
 
-def is_fuzzy_comanda(user_text, threshold=80):
+def is_fuzzy_comanda(user_text, threshold=90):
 
     comanda_keywords = [
         # română
@@ -161,8 +168,8 @@ def is_fuzzy_comanda(user_text, threshold=80):
         "cât costă x bucăți", "preț 50 mp", "livrare comandă", "plată", "comanda", "comanda" "curier",
         
         # rusă (litere chirilice, intenție clară de comandă)
-        "заказ", "купить", "хочу купить", "покупка", "покупаю", "оплата", "оформить заказ", "счет", "выставите счет",
-        "отправьте счет", "хочу приобрести", "доставку", "плачу", "готов оплатить", "оплатить", "сделать заказ"
+        "заказ", "купить", "купить", "покупка", "покупаю", "оплата", "оформить заказ", "счет", "выставите счет",
+        "отправьте счет", "приобрести", "доставку", "плачу", "готов оплатить", "оплатить", "сделать заказ"
     ]
         
     user_text = user_text.lower()
@@ -170,8 +177,7 @@ def is_fuzzy_comanda(user_text, threshold=80):
 
     for keyword in comanda_keywords:
         for word in words:
-            score = fuzz.partial_ratio(word, keyword)
-            if score >= threshold:
+            if fuzz.token_set_ratio(user_text, keyword) >= threshold:
                 return True
         # verificăm și fraze întregi
         if fuzz.partial_ratio(user_text, keyword) >= threshold:
@@ -240,11 +246,12 @@ def check_interest_rus(interest):
 
     if is_fuzzy_comanda(interest):
         return "comandă"
+    
 
     interests_prompt = (
         "Анализируй сообщение пользователя, чтобы точно определить намерение по следующим категориям:\n\n"
         
-        "1. produs_informații - ВКЛЮЧАЕТ предварительные намерения покупки, общие выражения, интерес или запрос категорий. В эту категорию относится любой интерес к:\n"
+        "1. 'produs_informații' - ВКЛЮЧАЕТ предварительные намерения покупки, общие выражения, интерес или запрос категорий. В эту категорию относится любой интерес к:\n"
         "- товару, товаре, продуктам, моделям, сериям, коллекциям, цветам, категориям ('Что у вас есть?', 'Какие еще модели?', 'Есть ли еще продукты?', 'Какие у вас товары?')\n"
         "- общие или неполные выражения: 'продукты?', 'категории?', 'другие модели?', 'водонепроницаемые?', 'товар?' – даже если вопрос неполный\n"
         "- расплывчатые или общие выражения интереса: 'хочу продукт', 'хочу товар', 'хочу модель', 'хочу посмотреть', 'что у вас в категории X'\n"
@@ -279,6 +286,7 @@ def check_interest_rus(interest):
         "'Есть ли еще категории?' => produs_informații\n"
         "'Продукты?' => produs_informații\n"
         "'Товар?' => produs_informații\n"
+        "'Товары' => produs_informații\n"
         "'Хотел бы увидеть другие варианты' => produs_informații\n"
         "'Хочу заказать 100 кв.м. на понедельник' => comandă\n"
         "'Пришлите счет на почту' => comandă\n"
@@ -328,6 +336,7 @@ def interests():
                     "🔍 Spune-ne te rog dacă <strong>ai mai avut vreo comandă la noi</strong> înainte.<br><br>"
                     "✅ E suficient să răspunzi cu <strong>DA</strong> sau <strong>NU</strong>."
                 )
+
 
             else:
                 reply = (
@@ -815,7 +824,6 @@ def welcome():
     print("categoria_aleasa = ", categoria_aleasa)
 
     if is_fuzzy_match(interests,"ds") :
-        print("444444")
         if is_fuzzy_match(interests, "decor"):
             categoria_aleasa = "ds 0.40 décor"
             preferinte["Categorie"] = categoria_aleasa
@@ -832,7 +840,6 @@ def welcome():
                 mesaj += " . <br><br> 📚 Doriti să aflați informații și despre alte categorii sau 🚀 doriți să comandați? 🤔"
             return jsonify({"message": mesaj})
         elif is_fuzzy_match(interests, "alzn"):
-            print("55555")
             categoria_aleasa = "ds 0.40 alzn"
             preferinte["Categorie"] = categoria_aleasa
             request_categorie = categoria_preferata(categoria_aleasa,alegere_pret)
@@ -850,7 +857,6 @@ def welcome():
 
             return jsonify({"message": mesaj})
         else:
-            print("66666")
             search_key = categoria_aleasa.split()[0].lower()
             sub_variante = [cat for cat in categorii_unice if search_key in cat.lower()]
             variante_fara_primul_cuvant = [' '.join(v.split()[1:]) for v in sub_variante]
@@ -876,7 +882,6 @@ def welcome():
                 preferinte['counter'] = 1
             return jsonify({"reply": mesaj})
     elif is_fuzzy_match(interests,"china"):
-        print("7777")
         if "mat" in interests.lower():
             categoria_aleasa = "china mat 0.40"
             preferinte["Categorie"] = categoria_aleasa
@@ -895,7 +900,7 @@ def welcome():
                 mesaj += " . <br><br> 📚 Doriti să aflați informații și despre alte categorii sau 🚀 doriți să comandați? 🤔"
             return jsonify({"message": mesaj})
 
-    print("3333333")
+    print("33333")
 
     if categoria_aleasa == "NU":
         if language_saved == "RO":
@@ -970,7 +975,7 @@ def welcome():
 
                 preferinte['counter'] = 1
             else:
-                print("1111111")
+                print("444444")
                 preferinte["Categorie"] = categoria_aleasa
                 request_categorie = categoria_preferata(categoria_aleasa,alegere_pret)
                 preferinte["Produsele_RO"] = request_categorie
@@ -982,13 +987,14 @@ def welcome():
                 if language_saved == "RU":
                     mesaj += "<br><br> 📚 Хотите узнать информацию и про другие категории или 🚀 хотите сделать заказ? 🤔"
                 elif language_saved == "RO":
-                    mesaj += "<br><br> 📚 Doriti să aflați informații și despre alte categorii sau 🚀 doriți să comandați? 🤔"
+                    mesaj += " . <br><br> 📚 Doriti să aflați informații și despre alte categorii sau 🚀 doriți să comandați? 🤔"
         
         else:
-            print("22222222 ")
+            print("55555")
             preferinte["Categorie"] = categoria_aleasa
             request_categorie = categoria_preferata(categoria_aleasa,alegere_pret)
             preferinte["Produsele_RO"] = request_categorie
+            # print("requestttttt ====== ", request_categorie)
             if language_saved == "RU":
                 request_categorie = traducere_produse(request_categorie)
             preferinte["Produsele"] = request_categorie
@@ -997,7 +1003,9 @@ def welcome():
             if language_saved == "RU":
                 mesaj += "<br><br> 📚 Хотите узнать информацию и про другие категории или 🚀 хотите сделать заказ? 🤔"
             elif language_saved == "RO":
-                mesaj += " . <br><br> 📚 Doriti să aflați informații și despre alte categorii sau 🚀 doriți să comandați? 🤔"
+                mesaj += "<br><br> 📚 Doriti să aflați informații și despre alte categorii sau 🚀 doriți să comandați? 🤔"
+            # print(mesaj)
+            return jsonify({"message": mesaj})
 
     # print(preferinte["Produsele"])
     return jsonify({"message": mesaj})
@@ -1719,6 +1727,14 @@ def numar_de_telefon():
 
     else:
         preferinte["Numar_Telefon"] = nr
+        number_response = check_number(nr)
+        if number_response == "TRUE":
+            print(number_response)
+            preferinte["Response_Comanda"] = "DA"
+        elif number_response == "FALSE":
+            print(number_response)
+            preferinte["Response_Comanda"] = "NU"
+        
         if language_saved == "RO":
                     messages = [
                         {
@@ -1826,6 +1842,7 @@ def numar_de_telefon_final():
 
     else:
         preferinte["Numar_Telefon"] = nr
+
         produs_exact = preferinte["Produs_Ales"]
         produsul_extras = check_price(produs_exact)
         if language_saved == "RO":
@@ -1851,6 +1868,40 @@ def numar_de_telefon_final():
         total = preferinte["Pret_Total"]
 
         cantitate = preferinte["Cantitate"]
+
+        nume_prenume = nume_prenume_corect.split(" ")
+        nume = nume_prenume[0].lower().title()
+        prenume = nume_prenume[1].lower().title()
+        preferinte["Trecut_Etapa_Finala"] = "da"
+        data = {
+            "properties": {
+                "comentariu": f"{pret_produs}",
+                "phone": f"{preferinte['Numar_Telefon']}",
+                "refuzat": f"{total}",
+                "nou": f"{preferinte["Culoare_Aleasa"]}",
+                "contactat": f"{preferinte['Categorie']}",
+                "produs": f"{produs_exact}",
+                "oferta": f"{cantitate}",
+                "firstname": f"{prenume}",
+                "lastname": f"{nume}",
+                "contract": f"{preferinte['Trecut_Etapa_Finala']}"
+            }
+        }
+
+        url = "https://api.hubapi.com/crm/v3/objects/contacts"
+
+        headers = {
+            "Authorization": HUBSPOT_TOKEN,
+            "Content-Type": "application/json"
+        }
+        
+
+        response = requests.post(url, json=data, headers=headers)
+
+        if response.status_code == 201:
+            print("Contact creat!")
+        else:
+            print("Eroare:", response.status_code, response.text)
 
         mesaj_telegram = (
             f"👤 Nume Prenume: {nume_prenume_corect} \n"
@@ -2327,7 +2378,7 @@ def verifica_culoare_cu_ai(interests, culori, language):
     return ask_with_ai(messages, temperature=0.3, max_tokens=20)
 
 
-def verifica_culoare_generala_cu_ai(interests):
+def verifica_culoare_generala_cu_ai(interests, language_saved):
     if language_saved == "RO":
         prompt = (
             "Ești un asistent care detectează dacă un mesaj conține o denumire validă de culoare, chiar și generică.\n\n"
@@ -2529,6 +2580,7 @@ def culoare():
                     "💬 Ответь числом (например: 50, 100...), чтобы мы могли продолжить оформление заказа."
                 )
 
+
             return jsonify({"reply": reply})
 
 
@@ -2706,6 +2758,40 @@ def final_stage():
     # preferinte["Pret_Total"] = total
     cantitate = preferinte["Cantitate"]
 
+    nume_prenume = nume_prenume_corect.split(" ")
+    nume = nume_prenume[0].lower().title()
+
+    prenume = nume_prenume[1].lower().title()
+
+    data = {
+        "properties": {
+            "comentariu": f"{pret_produs}",
+            "phone": f"{preferinte['Numar_Telefon']}",
+            "refuzat": f"{total}",
+            "nou": f"{preferinte["Culoare_Aleasa"]}",
+            "contactat": f"{preferinte['Categorie']}",
+            "produs": f"{produs_exact}",
+            "oferta": f"{cantitate}",
+            "firstname": f"{prenume}",
+            "lastname": f"{nume}",
+            # "contract": f"{}"
+        }
+    }
+
+    url = "https://api.hubapi.com/crm/v3/objects/contacts"
+
+    headers = {
+        "Authorization": HUBSPOT_TOKEN,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, json=data, headers=headers)
+
+    if response.status_code == 201:
+        print("Contact creat!")
+    else:
+        print("Eroare:", response.status_code, response.text)
+
     mesaj_telegram = (
         f"👤 Nume Prenume: {nume_prenume_corect} \n"
         f"📞 Numar de telefon: {preferinte['Numar_Telefon']} \n"
@@ -2823,6 +2909,7 @@ def cantitate():
     # url = f"https://api.telegram.org/bot{TELEGRAM}/sendMessage?chat_id={CHAT_ID}&text={mesaj_encodat}"
     # response = requests.get(url)
 
+
     print_frumos = cantitate_afiseaza(pret_produs , cantitate , language_saved)
     # print_frumos = print_price(pret_produs,cantitate,produs_exact,preferinte["Culoare_Aleasa"], masurare, language_saved)
 
@@ -2843,6 +2930,7 @@ def check_resp():
     response = check_response(message)
 
     if response == "DA":
+        preferinte["Trecut_Etapa_Finala"] = "da"
         if preferinte["Nume_Prenume"] == "":
             if language_saved == "RO":
                 reply = (
@@ -2869,8 +2957,6 @@ def check_resp():
                 )
             return jsonify({"reply": reply})
 
-
-
         produs_exact = preferinte["Produs_Ales"]
         produsul_extras = preferinte["PRODUS_EXTRAS"]
         if language_saved == "RO":
@@ -2887,11 +2973,46 @@ def check_resp():
                 masurare = "мл"
             elif "лист" in produsul_extras or "бумаг" in produsul_extras:
                 masurare = "foi"
-        pret_produs = preferinte["Pret_Produs_Extras"]
+
 
         nume_prenume_corect = preferinte["Nume_Prenume"]
         total = preferinte["Pret_Total"]
         cantitate = preferinte["Cantitate"]
+
+        pret_produs = preferinte["Pret_Produs_Extras"]
+        nume_prenume = nume_prenume_corect.split(" ")
+        nume = nume_prenume[0].lower().title()
+        prenume = nume_prenume[1].lower().title()
+
+        data = {
+            "properties": {
+                "comentariu": f"{pret_produs}",
+                "phone": f"{preferinte['Numar_Telefon']}",
+                "refuzat": f"{total}",
+                "nou": f"{preferinte["Culoare_Aleasa"]}",
+                "contactat": f"{preferinte['Categorie']}",
+                "produs": f"{produs_exact}",
+                "oferta": f"{cantitate}",
+                "firstname": f"{prenume}",
+                "lastname": f"{nume}",
+                "contract": f"{preferinte["Trecut_Etapa_Finala"]}"
+            }
+        }
+
+        url = "https://api.hubapi.com/crm/v3/objects/contacts"
+
+        headers = {
+            "Authorization": HUBSPOT_TOKEN,
+            "Content-Type": "application/json"
+        }
+
+        response = requests.post(url, json=data, headers=headers)
+
+        if response.status_code == 201:
+            print("Contact creat!")
+        else:
+            print("Eroare:", response.status_code, response.text)
+
         mesaj_telegram = (
             f"👤 Nume Prenume: {nume_prenume_corect} \n"
             f"📞 Numar de telefon: {preferinte['Numar_Telefon']} \n"
@@ -2911,6 +3032,65 @@ def check_resp():
         return jsonify({"reply": print_frumos})
 
     elif response == "NU":
+        preferinte["Trecut_Etapa_Finala"] = "nu"
+        produs_exact = preferinte["Produs_Ales"]
+        produsul_extras = preferinte["PRODUS_EXTRAS"]
+        if language_saved == "RO":
+            if "m2" in produsul_extras:
+                masurare = "m2"
+            elif "ml" in produsul_extras:
+                masurare = "ml"
+            elif "foaie" in produsul_extras:
+                masurare = "foi"
+        else:
+            if "м2" in produsul_extras:
+                masurare = "m2"
+            elif "мл" in produsul_extras:
+                masurare = "мл"
+            elif "лист" in produsul_extras or "бумаг" in produsul_extras:
+                masurare = "foi"
+
+
+        nume_prenume_corect = preferinte["Nume_Prenume"]
+        total = preferinte["Pret_Total"]
+        cantitate = preferinte["Cantitate"]
+        print("numeeeee = ", nume_prenume_corect)
+
+        if nume_prenume_corect != "":
+            pret_produs = preferinte["Pret_Produs_Extras"]
+            nume_prenume = nume_prenume_corect.split(" ")
+            nume = nume_prenume[0].lower().title()
+            prenume = nume_prenume[1].lower().title()
+
+            data = {
+                "properties": {
+                    "comentariu": f"{pret_produs}",
+                    "phone": f"{preferinte['Numar_Telefon']}",
+                    "refuzat": f"{total}",
+                    "nou": f"{preferinte["Culoare_Aleasa"]}",
+                    "contactat": f"{preferinte['Categorie']}",
+                    "produs": f"{produs_exact}",
+                    "oferta": f"{cantitate}",
+                    "firstname": f"{prenume}",
+                    "lastname": f"{nume}",
+                    "contract": f"{preferinte["Trecut_Etapa_Finala"]}"
+                }
+            }
+
+            url = "https://api.hubapi.com/crm/v3/objects/contacts"
+
+            headers = {
+                "Authorization": HUBSPOT_TOKEN,
+                "Content-Type": "application/json"
+            }
+
+            response = requests.post(url, json=data, headers=headers)
+
+            if response.status_code == 201:
+                print("Contact creat!")
+            else:
+                print("Eroare:", response.status_code, response.text)
+
         if language_saved == "RO":
             reply = (
                 "✅ <strong>Am înțeles</strong>, îți mulțumim mult pentru răspuns!<br><br>"
@@ -2967,7 +3147,6 @@ def ai_mai_comandat_welcome():
     language_saved = data.get("language","")
 
     response = check_response_comanda(message)
-
 
     print(response)
     
@@ -3099,8 +3278,6 @@ def ask_with_ai(messages , temperature = 0.9 , max_tokens = 100):
         max_tokens=max_tokens
     )
     return response.choices[0].message.content.strip()
-
-
 
 
 @app.route("/", defaults={"path": ""})
