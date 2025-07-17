@@ -630,11 +630,7 @@ def check_and_get_category(user_interest, categorii_unice, threshold=70):
 
     if este_numar(user_interest):
         return "NU"
-
-    # Prima încercare: fuzzy matching
-    if is_comanda(user_interest):
-        return "comandă"
-
+        
     fuzzy_result = fuzzy_check_category(user_interest, categorii_unice, threshold)
 
     if fuzzy_result != "NU":
