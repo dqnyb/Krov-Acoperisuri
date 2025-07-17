@@ -193,6 +193,7 @@ const LiveChat: React.FC = () => {
         { id: Date.now(), text: message, from: "user" }
       ]);
       setMessage("");
+      setIsTyping(true);
 
     
       fetch("https://krov-acoperisuri.onrender.com/welcome", {
@@ -688,6 +689,7 @@ const LiveChat: React.FC = () => {
       ]);
       setMessage("");
       setUserInterests(message);
+      setIsTyping(true);
 
     
       fetch("https://krov-acoperisuri.onrender.com/ai_mai_comandat", {
