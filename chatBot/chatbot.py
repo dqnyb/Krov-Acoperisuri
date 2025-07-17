@@ -50,7 +50,7 @@ preferinte = {}
 preferinte['interes_salvat'] = ""
 preferinte["Numar_Telefon"] = ""
 preferinte["Trecut_Etapa_Finala"] = ""
-df = pd.read_excel('chatBot/p.xlsx')
+df = pd.read_excel('p.xlsx')
 categorii = df['Categorie']
 categorii_unice = list(dict.fromkeys(categorii.dropna().astype(str)))
 print("categorii unice = " , categorii_unice)
@@ -940,12 +940,6 @@ def welcome():
 
             preferinte['interes_salvat'] = ""
 
-    elif categoria_aleasa == "comandă":
-        if language_saved == "RO":
-            mesaj = "🌟 Mulțumim că ai ales KROV! Pentru a putea procesa comanda ta cât mai rapid, te rugăm frumos să ne spui numele și prenumele tău. 😊"
-        elif language_saved == "RU":
-            mesaj  = "🌟 Спасибо, что выбрали KROV! Чтобы мы могли как можно быстрее обработать ваш заказ, пожалуйста, укажите <strong>ваше имя и фамилию</strong>. 😊"
-        return jsonify({"message": mesaj})
     else:
         search_key = categoria_aleasa.split()[0].lower()
 
