@@ -17,8 +17,7 @@ Iată toate produsele din categoria "RoofArt; China 0.30" cu prețul din listă:
    - Цена из списка: 145,44 MDL / м2
 
 4. **Профнастил HP&HA-12**
-   - Цена из списка: 159,98 MDL / м2
-
+   - Цена из списка: 159,98 MDL / м
 5. **Сортовая стружка**
    - Цена из списка: 63,45 MDL / мл
 

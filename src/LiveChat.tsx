@@ -889,14 +889,8 @@ const LiveChat: React.FC = () => {
                 dangerouslySetInnerHTML={{ __html: msg.text }}
               />
             ))}
-            {isTyping && (
-              <div className="flex mb-3" id="typing-indicator">
-                <div className="typing-dots flex space-x-2 px-4 py-2">
-                  <span className="dot"></span>
-                  <span className="dot"></span>
-                  <span className="dot"></span>
-                </div>
-              </div>
+            {(loading || isTyping) && (
+              <div className="livechat-message livechat-message-bot">...scriu răspuns...</div>
             )}
             <div ref={messagesEndRef} />
           </div>
